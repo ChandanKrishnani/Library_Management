@@ -34,8 +34,6 @@ class library
             {
                 if(id==temp->id)
                 {
-                    cout<<"Id found in search_supporting";
-                   
                     return temp;
                 }
                 temp=temp->next_add;
@@ -60,7 +58,8 @@ class students:public library
         Student *stu_head=NULL;
         void issueBook();
         void studentWithBooks();
-       
+        void depositBook();
+        static void wait();
         void insertNode(Student *ptr)
         {
             Student *temp=new Student;
@@ -69,9 +68,9 @@ class students:public library
             temp->book_id[0]=ptr->book_id[0];
             if(stu_head==NULL)
             {
-                cout<<"head is null in student";
+              
                 stu_head=temp;
-                cout<<"stu name"<<ptr->stu_name;
+                
             }
             else
             {
@@ -90,7 +89,7 @@ class students:public library
         {
             if(stu_head==NULL)
             {
-                cout<<" head is null no id found";
+                
                 return NULL;
             }
             else
@@ -109,23 +108,77 @@ class students:public library
         }
    
 };
-void students::studentWithBooks()
+void students::depositBook()
 {
+    system("clear");
     cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
-    Student *temp=stu_head;
     if(stu_head==NULL)
     {
-        cout<<"No record available";
+        cout<<"\n No record available !";
     }
     else
     {
+        int id,book_id;
+        q:
+        cout<<"\n\n Student ID : ";
+        cin>>id;
+        Student *temp=stu_search_supporting(id);
+        if(temp==NULL)
+        {
+            cout<<"\n Invalid ID !!";
+            goto q;
+        }
+        cout<<"\n\n Book id : ";
+        cin>>book_id;
+        bool flag=false;
+        for(int i=Book_allowed-1;i>=0;i--)
+        {
+        
+            if(book_id==temp->book_id[i])
+            {
+                temp->book_id[i]=0;
+                flag=true;
+                break;
+            }
+        }
+        if(flag)
+        {
+            Node *tempr=search_supporting(book_id);
+            tempr->book_count+=1;
+            cout<<" \n\nBook successfully Submitted !";
+            
+        }
+        else
+        {
+            cout<<"\n\n Sorry!! Book not found in students account";
+        }
+        
+    }
+    cout<<"\n\n\t\t\t=========================================================";
+    students::wait();
+}
+void students::studentWithBooks()
+{
+    system("clear");
+    cout<<"\n\n\t\t\t=========================================================";
+    cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
+    cout<<"\n\n\t\t\t=========================================================";
+    
+    Student *temp=stu_head;
+    if(stu_head==NULL)
+    {
+        cout<<"\n\n No record available !!";
+    }
+    else
+    {
+        cout<<"\n\n Record of Students having Books \n";
     while(temp!=NULL)
     {
-        cout<<"\nStudent id : "<<temp->stu_id;
-        cout<<"\nStudent Name : "<<temp->stu_name;
-        cout<<"\nBooks alloted :";
+        cout<<"\n Student id : "<<temp->stu_id;
+        cout<<"\n Student Name : "<<temp->stu_name;
+        cout<<"\n Books alloted : ";
         for(int i=0;i<Book_allowed;i++)
         {
             if(temp->book_id[i]>0)
@@ -133,50 +186,52 @@ void students::studentWithBooks()
                 cout<<temp->book_id[i]<<" ";
             }
         }
+         cout<<"\n\n\t\t\t=========================================================";
         temp=temp->next_add;
     }
     }
+    students::wait();
    
 }
 void students::issueBook()
 {
    
+     system("clear");
     cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
     if(head==NULL)
     {
-        cout<<"No Books available to issue............!";
+        cout<<"\n\nNo Books available to issue............!";
     }
     else
     {
-        cout<<"\n Books available for issue.....!";
+      
         displayAll();
         int id,book_id;
-     
         c:
-         cout<<"Enter Book ID:";
+         cout<<"\n Book ID : ";
          cin>>book_id;
          Node *ptr=search_supporting(book_id);
-         if(ptr==NULL && ptr->book_count>0)
+         if(ptr==NULL || ptr->book_count==0)
          {
-             cout<<"Invlaid Book Id";
+             cout<<"\n\n Invlaid Book Id.......!";
              goto c;
          }
-        cout<<"\n\nEnter student ID:";
+        cout<<"\n\n Enter Student ID : ";
         cin>>id;
         Student *temp=stu_search_supporting(id);
         if(temp==NULL)
         {
-              cout<<"No record found for student id";
+              cout<<"\n No record found for student id(New record will be added)";
               Student *stu_temp=new Student;
               stu_temp->stu_id=id;
               stu_temp->book_id[0]=book_id;
-              cout<<"Enter Student Name : ";
+              cout<<"\n\n Enter Student Name : ";
               cin>>stu_temp->stu_name;
               ptr->book_count=ptr->book_count-1;
               insertNode(stu_temp);
-              cout<<"Record added!!!";
+              cout<<"\n\nRecord added!!!";
         }
         else
         {
@@ -186,7 +241,7 @@ void students::issueBook()
             {
                 if(temp->book_id[i-1]==0)
                 {
-                    cout<<"Okay we got 0";
+                   
                     break;
                 }
              
@@ -196,82 +251,89 @@ void students::issueBook()
             i=i-1;
             if(i==Book_allowed)
             {
-                cout<<"Book can not be alloted you are already full";
+                cout<<"\n\n Sorry!! Student already has taken at Full capacity";
             }
             else
             {
-                cout<<"Ookay we can give you a book";
+                cout<<"\n\n Congratulations!! Book alloted.";
+                ptr->book_count=ptr->book_count-1;
                 temp->book_id[i]=book_id;
-                cout<<"Book alloted";
             }
            
         }
+        
        
        
     }
+    cout<<"\n\n\t\t\t=========================================================";
+    students::wait();
+    
 }
 
 void library::deleteNode()
 {
-                cout<<"\n\n\t\t\t=========================================================";
-                cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
-                cout<<"\n\n\t\t\t=========================================================";
-                cout<<"\n\n  Delete a record........!";
-                int id;
-                cout<<"\n\n BookId";
-                cin>>id;
-                Node *temp=search_supporting(id);
-                if(head==NULL)
-                {
-                    cout<<"No record to delete !!";
-                }
-                else if(temp==NULL)
-                {
-                    cout<<"\n\nInvalid Id !!";
-                }
-                else
-                {
+    system("clear");
+    cout<<"\n\n\t\t\t=========================================================";
+    cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
+    cout<<"\n\n\t\t\t=========================================================";
+    cout<<"\n\n  Delete a record........!";
+    int id;
+    cout<<"\n\n Book ID : ";
+    cin>>id;
+    Node *temp=search_supporting(id);
+    if(head==NULL)
+    {
+        cout<<"\n\n No record to delete !!";
+    }
+    else if(temp==NULL)
+    {
+        cout<<"\n\n Invalid Id !!";
+    }
+    else
+    {
+        if(head->id==id)
+        {
+            head=head->next_add;
+            cout<<"\n\n Deleted!!!";
+        }
+        else
+        {
+            Node* prev=NULL;
+            Node* temp2=head;
+            while(temp2->id!=id)
+            {
+                prev=temp2;
+                temp2=temp2->next_add;
+            }
+            if(temp->next_add==NULL)
+            {
+                prev->next_add=NULL;
+            }
+            else
+            {
+                prev->next_add=temp->next_add;
+            }
+            cout<<"\n\n Record Deleted!!!";
+        }
                    
-                    if(head->id==id)
-                    {
-                        head=head->next_add;
-                        cout<<"Deleted!!!";
-                        cout<<"Now List is empty!";
-                    }
-                    else
-                    {
-                        Node* prev=NULL;
-                        Node* temp2=head;
-                        while(temp2->id!=id)
-                        {
-                            prev=temp2;
-                            temp2=temp2->next_add;
-                        }
-                        if(temp->next_add==NULL)
-                        {
-                            prev->next_add=NULL;
-                        }
-                        else
-                        {
-                            prev->next_add=temp->next_add;
-                        }
-                        cout<<"Record Deleted!!!";
-                    }
-                   
-                }
+    }
+    cout<<"\n\n\t\t\t=========================================================";
+    students::wait();
 }
 void library::displayAll()
 {
+     system("clear");
     cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
 
     if(head==NULL)
     {
-        cout<<"There is no data to show!!";
+        cout<<"\n\n There is no data to show!!";
     }
     else
     {
+        cout<<"\t\t\t\n\n Record of all Books Available! ";
         Node *ptr=head;
         while(ptr != NULL)
         {
@@ -281,62 +343,61 @@ void library::displayAll()
                 cout<<"\n\n Author Name : "<<ptr->author;
                 cout<<"\n\n Publisher Name : "<<ptr->publisher;
                 cout<<"\n\n\t\t\t=========================================================";
-                ptr =ptr->next_add;
+                ptr=ptr->next_add;
         }
     }
+     students::wait();
    
 }
 
 void library::update()
 {
-     system("clear");
+    system("clear");
     int id;
     cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
     if(head==NULL)
     {
-        cout<<"No Record exist to update..........";
+        cout<<"\n\n No Record exist to update..........";
     }
     else
     {
    
-        cout<<"Update book details";
-        cout<<"Book id : ";
+        cout<<"\n\t\t\t Update book details";
+        cout<<"\n\n Book id : ";
         cin>>id;
         Node *temp_node=search_supporting(id);
         if(temp_node==NULL)
         {
-            cout<<"Invalid id to update";
+            cout<<"\nInvalid id to update";
         }
         else
         {
             int id_check;
-            cout<<"\n\nBook Id : ";
+            cout<<"\n\nNew Book Id : ";
             cin>>id_check;
-            cout<<"\n\nVerifying Id";
+         
             Node *ptr=search_supporting(id_check);
             if(ptr==NULL || id_check==id)
             {
-                           temp_node->id=id_check;
-                           cout<<"Valid Id!!..continue filling details";
-                           cout<<"Name : ";
-                           cin>>temp_node->name;
-                           cout<<"Book Count : ";
-                           cin>>temp_node->book_count;
-                           cout<<" Author Name : ";
-                           cin>>temp_node->author;
-                           cout<<" Publisher name: ";
-                            cin>>temp_node->publisher;
-                            cout<<"Details updated successfully......!";
-                           
-               
+                temp_node->id=id_check;
+                cout<<"\n Book Name : ";
+                cin>>temp_node->name;
+                cout<<"\n Book Count : ";
+                cin>>temp_node->book_count;
+                cout<<"\n Author Name : ";
+                cin>>temp_node->author;
+                cout<<"\n Publisher name: ";
+                cin>>temp_node->publisher;
+                cout<<"\n Details updated successfully......!";
             }
 
            
         }
          
     }
+    students::wait();
 }
 void library::search()
 {
@@ -352,20 +413,18 @@ void library::search()
     }
     else
     {
-        cout<<"\n\n Book ID:";
+        cout<<"\t\t\t\n BOOK Details";
+        cout<<"\n\n Book ID : ";
         cin>>id;
         Node *ptr = search_supporting(id);
         if(ptr==0)
         {
-            cout<<"Invalid Id Enetered...................!";
+            cout<<"\n\n Invalid Id Enetered...................!";
         }
         else
         {
-                system("clear");
-                cout<<"\n\n\t\t\t=========================================================";
-                cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
-                cout<<"\n\n\t\t\t=========================================================";
-                cout<<"\n\n Book id : "<<ptr->id;
+          
+                
                 cout<<"\n\n Book Name : "<<ptr->name;
                 cout<<"\n\n Book count : "<<ptr->book_count;
                 cout<<"\n\n Author Name : "<<ptr->author;
@@ -375,34 +434,39 @@ void library::search()
            
            
         }
+        cout<<"\n\n\t\t\t=========================================================";
+        students::wait();
+        
    
 }
 
 void menu()
 {
+  
     students obj;
-    p:
- 
     int choice;
-     cout<<"\n\n\t\t\t=========================================================";
+    p:
+    system("clear");
+   
+    cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
-    cout<<"\n1. Insert a New Book";
-    cout<<"\n2. Search a Book";
-    cout<<"\n3. Update record of Books";
-    cout<<"\n4. Delete a Book";
-    cout<<"\n5. Show all record o Books";
+    cout<<"\n 1. Add a New Book";
+    cout<<"\n 2. Search a Book";
+    cout<<"\n 3. Update record of Books";
+    cout<<"\n 4. Delete a Book";
+    cout<<"\n 5. Show stock of available Books";
 
     cout<<"\n\n\t\t\t=========================================================";
    
-    cout<<"\n6. Issue a book to student";
-    cout<<"\n7. Desposit a book of stduent";
-    cout<<"\n8. Issued books to stduents";
+    cout<<"\n 6. Issue a book to student";
+    cout<<"\n 7. Desposit a book of stduent";
+    cout<<"\n 8. Issued books to stduents";
    
        cout<<"\n\n\t\t\t=========================================================";
    
    
-    cout<<"\n9. Exit";
+    cout<<"\n 9. Exit";
     cout<<"\n Enter your choice : ";
     cin>>choice;
     switch(choice)
@@ -412,7 +476,6 @@ void menu()
             break;
         case 2:
             obj.search();
-           
             break;
         case 3:
             obj.update();
@@ -426,6 +489,9 @@ void menu()
         case 6:
            obj.issueBook();
             break;
+        case 7:
+            obj.depositBook();
+            break;
         case 8:
             obj.studentWithBooks();
             break;
@@ -433,7 +499,7 @@ void menu()
         case 9:
             exit(0);
         default:
-            cout<<"Invalid Choice please try again";
+            cout<<" \nInvalid Choice please try again";
     }
     getch();
     goto p;
@@ -442,35 +508,37 @@ void menu()
 
 void library :: insert()
 {
-   
+    system("clear");
     cout<<"\n\n\t\t\t=========================================================";
     cout<<"\n\n\t\t\t================LIBRARY MANAGEMENT SYSTEM================";
     cout<<"\n\n\t\t\t=========================================================";
     Node *temp_node = new Node;
+    cout<<"\t\t\t\n\n Adding a new Book in LIBRARY";
     q:
-    cout<<"\n\nBook Id : ";
+    cout<<"\n\n Book Id : ";
     cin>>temp_node->id;
-    cout<<"\n\nVerifying Id";
+   
     Node *ptr=search_supporting(temp_node->id);
-    cout<<" here is the ptr : "<<ptr;
+    
+  
     if(ptr!=NULL)
     {
-        cout<<"\n\nInvalid Id alreay exist !!";
+        cout<<"\n Invalid Id alreay exist !!";
         goto q;
     }
-    cout<<"Valid Id!!..continue filling details";
-    cout<<"Name : ";
+
+    cout<<"\n Book Name : ";
     cin>>temp_node->name;
-    cout<<"Book Count";
+    cout<<"\n Book Count : ";
     cin>>temp_node->book_count;
-    cout<<" Author Name : ";
+    cout<<"\n Author Name : ";
     cin>>temp_node->author;
-    cout<<" Publisher name: ";
+    cout<<"\n Publisher name: ";
     cin>>temp_node->publisher;
     temp_node->next_add=NULL;
     if(head==NULL)
     {
-        cout<<"head Null";
+        
         head=temp_node;
     }
     else
@@ -483,7 +551,23 @@ void library :: insert()
         }
         ptr->next_add=temp_node;
     }
-    cout<<"Record added successfully........................";
+    cout<<" Record added successfully........................!";
+    cout<<"\n\n\t\t\t =========================================================";
+    students::wait();
+}
+void students::wait()
+{
+    char a;
+    while(1)
+    {
+
+        cout<<"\n\n Press Y to conutinue : ";
+        cin>>a;
+        if(a=='Y')
+        {
+            break;
+        }
+    }
 }
 int main()
 {
